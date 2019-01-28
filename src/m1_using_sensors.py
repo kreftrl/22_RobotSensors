@@ -28,12 +28,12 @@ def main():
     #run_test_beep_and_tone()
     #run_test_go_straight_for_seconds()
     #run_test_go_straight_for_inches_using_time()
-    run_test_go_straight_for_inches_using_sensor()
+    #run_test_go_straight_for_inches_using_sensor()
     # run_test_raise_arm()
     # run_test_lower_arm()
-    # run_test_go_straight_until_black()
-    # run_test_go_forward_until_distance_is_less_than()
-    # run_test_tones_until_touch_sensor_is_pressed()
+    #run_test_go_straight_until_black()
+    #run_test_go_forward_until_distance_is_less_than()
+    run_test_tones_until_touch_sensor_is_pressed()
 
 
 def run_test_beep_and_tone():
@@ -288,9 +288,10 @@ def run_test_go_straight_until_black():
     print('Testing the   go_straight_until_black   method of DriveSystem:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 13. Implement this test method, then implement the method it tests.
+    # DONE: 13. Implement this test method, then implement the method it tests.
     # -------------------------------------------------------------------------
-
+    d=DriveSystem()
+    d.go_straight_until_black(100)
 
 def run_test_go_forward_until_distance_is_less_than():
     """ Tests the   go_forward_until_distance_is_less_than   method of DriveSystem. """
@@ -299,9 +300,10 @@ def run_test_go_forward_until_distance_is_less_than():
     print('Testing the   go_forward_until_distance_is_less_than   method of DriveSystem:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 14. Implement this test method, then implement the method it tests.
+    # DONE: 14. Implement this test method, then implement the method it tests.
     # -------------------------------------------------------------------------
-
+    d=DriveSystem()
+    d.go_forward_until_distance_is_less_than(12,50)
 
 def run_test_tones_until_touch_sensor_is_pressed():
     """ Tests the   tones_until_touch_sensor_is_pressed   method of DriveSystem. """
@@ -312,7 +314,8 @@ def run_test_tones_until_touch_sensor_is_pressed():
     # -------------------------------------------------------------------------
     # TODO: 15. Implement this test method, then implement the method it tests.
     # -------------------------------------------------------------------------
-
+    # d=DriveSystem
+    # d.tones_until_touch_sensor_is_pressed()
 
 ###############################################################################
 #    DriveSystem    and    ArmAndClaw    classes.
@@ -379,7 +382,14 @@ class DriveSystem(object):
         Goes straight at the given speed until the robot is over
         a black surface, as measured by the color sensor.
         """
-        pass
+
+        self.go(speed,speed)
+        colorsensor=ColorSensor(3)
+        while True:
+            if colorsensor.get_reflected_light_intensity() <= 5:
+                break
+        self.stop()
+
 
     def go_forward_until_distance_is_less_than(self, inches, speed):
         """
@@ -387,15 +397,29 @@ class DriveSystem(object):
         to the nearest object, per the infrared proximity sensor,
         is less than the given number of inches.
         """
-        pass
+        irsensor=InfraredProximitySensor(4)
+        self.go(speed,speed)
+        while True:
+            if irsensor.get_distance()<=inches:
+                break
+        self.stop()
+
 
     def tones_until_touch_sensor_is_pressed(self):
         """
         Plays an increasing sequence of short tones,
         stopping when the touch sensor is pressed.
         """
-        pass
-
+        touchsensor=TouchSensor(1)
+        t=ToneMaker()
+        k=100
+        while True:
+            if k>200:
+                k=100
+            t.tone(k,.1).wait()
+            if touchsensor.is_pressed()==True:
+                break
+            k=k+10
 
 ###############################################################################
 # Classes built directly upon the underlying EV3 robot modules:
